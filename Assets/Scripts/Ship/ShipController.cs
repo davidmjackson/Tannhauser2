@@ -72,6 +72,11 @@ public class ShipController : MonoBehaviour
         float bank = -roll * rollRate * Time.fixedDeltaTime;
         Quaternion delta = Quaternion.Euler(pitch, yaw, bank);
         rb.MoveRotation(rb.rotation * delta);
+        // Steering is driven entirely by MoveRotation, so the body should carry
+        // no angular velocity of its own. Zeroing it each step stops the residual
+        // spin that MoveRotation leaves behind (otherwise the nose drifts, because
+        // angularDamping is 0 and nothing bleeds it off).
+        rb.angularVelocity = Vector3.zero;
         look = Vector2.zero; // consumed this physics step
 
         // Thrust with momentum
