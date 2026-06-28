@@ -1,12 +1,16 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// One space station, built from primitives at spawn so it reads as a station
 /// rather than a plain block. Owns its identity (name, id, tint) and a dock
-/// point that the docking step (next) will use. Placeholder art on purpose.
+/// point that the docking step uses. Placeholder art on purpose.
 /// </summary>
 public class Station : MonoBehaviour
 {
+    /// <summary>All live stations, for nav and docking queries.</summary>
+    public static readonly List<Station> All = new List<Station>();
+
     public string displayName = "Station";
     public string id = "STN";
     public Color tint = Color.white;
@@ -25,6 +29,7 @@ public class Station : MonoBehaviour
         this.tint = tint;
         name = displayName;
         transform.position = position;
+        if (!All.Contains(this)) All.Add(this);
         BuildBody();
     }
 
@@ -60,5 +65,10 @@ public class Station : MonoBehaviour
         // No colliders yet; the docking step handles approach later.
         Collider col = part.GetComponent<Collider>();
         if (col != null) Destroy(col);
+    }
+
+    void OnDestroy()
+    {
+        All.Remove(this);
     }
 }
