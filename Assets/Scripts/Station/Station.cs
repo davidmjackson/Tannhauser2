@@ -71,4 +71,18 @@ public class Station : MonoBehaviour
     {
         All.Remove(this);
     }
+
+    /// <summary>
+    /// Rebuilds All by scanning the scene, but only when it looks empty.
+    /// A Unity domain reload (for example a script recompile during play) wipes
+    /// the static list, and stations only register on spawn, so a reload can
+    /// leave it empty even though stations still exist. Callers self-heal by
+    /// calling this. No-op in normal play once the list is populated.
+    /// </summary>
+    public static void EnsureRegistry()
+    {
+        if (All.Count > 0) return;
+        foreach (var s in FindObjectsByType<Station>(FindObjectsSortMode.None))
+            if (!All.Contains(s)) All.Add(s);
+    }
 }

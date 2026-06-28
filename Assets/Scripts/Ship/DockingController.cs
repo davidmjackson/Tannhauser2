@@ -68,6 +68,7 @@ public class DockingController : MonoBehaviour
 
     Station FindNearestInRange()
     {
+        Station.EnsureRegistry(); // self-heal if a domain reload wiped the list
         Station best = null;
         float bestSqr = dockRange * dockRange;
         foreach (var s in Station.All)
