@@ -52,9 +52,12 @@ A small three-planet system with fast travel, a moving market, and a first job.
       before news so news can name specific goods. (Spec:
       `docs/superpowers/specs/2026-06-29-rung2-step2b-multiple-commodities-design.md`)
 
-**Step 2c — Financial news + event shocks**  [ ]
-- [ ] A periodic news feed whose articles hint at coming price peaks/troughs,
-      plus one-off "mega" price shocks layered on top of the natural waves.
+**Step 2c — Financial news + event shocks**  [~]
+- [~] A news feed whose headlines herald one-off price shocks (both directions:
+      spikes to sell into, crashes to buy into), layered on top of the natural
+      waves. News is always-true and shown in the docked panel; every shock is a
+      pure time-term added to the mid. (Spec:
+      `docs/superpowers/specs/2026-06-29-rung2-step2c-financial-news-event-shocks-design.md`)
 
 **Step 3 — First cargo mission**  [ ]
 - [ ] Accept a delivery job at one station, fulfil it at another for a reward
@@ -68,6 +71,12 @@ The meaty systems. Each is heavy feel-work, prototyped then judged by playing.
 - [ ] Distinct flight vs. docking handling modes (the "ship behaves differently" idea)
 - [ ] Ship buying (a ladder of hulls for different roles)
 - [ ] Ship upgrades (modules: engines, weapons, shields, cargo, jump range)
+- [ ] Docked console hub: camera transitions to a console screen on dock, showing
+      news, cargo manifest + profit, damage/repair, fuel/refuel, shields, and a
+      ship blueprint with buyable upgrade slots (the home for the panels above).
+      Parked vision: `docs/superpowers/specs/2026-06-29-docked-console-cockpit-vision.md`
+- [ ] Cockpit flight view: fly from inside the ship with dashboards, controls, and
+      screens (incl. a news feed), instead of/alongside the chase camera.
 
 ## Rung 4 — v1 (the natural "done" line)  [ ]
 
@@ -102,7 +111,8 @@ Rung 2, Step 1 is complete (all four tasks done, acceptance passed) and merged.
 Rung 2, Steps 2 (market price trends) and 2b (multiple commodities) are both
 complete and acceptance-passed. Step 2 added per-station moving prices with a
 buy/sell spread; Step 2b added three specialized goods (Fuel/Grain/Electronics),
-a shared hold, and per-(station,good) markets. Next up is Step 2c (financial
-news + event shocks), which can now name specific goods, then Step 3 (first cargo
-mission). A few jump-drive polish items remain parked (see the step-1 polish
-list).
+a shared hold, and per-(station,good) markets. Step 2c (financial news + event
+shocks) is now in progress: design approved and spec written, implementation
+plan next. After it comes Step 3 (first cargo mission). The full docked-console +
+cockpit idea is captured and parked for Rung 3 (see that vision spec). A few
+jump-drive polish items also remain parked (see the step-1 polish list).
