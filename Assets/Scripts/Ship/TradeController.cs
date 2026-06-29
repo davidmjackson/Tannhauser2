@@ -1,10 +1,12 @@
 using UnityEngine;
 
 /// <summary>
-/// Player economy for Rung 1. Holds credits and a single cargo type, and draws a
-/// placeholder trade UI via OnGUI. Always shows a corner readout of credits and
-/// cargo. The docked Buy/Sell panel is added in Task 4. Lives on the Ship
-/// GameObject alongside DockingController. Placeholder UI on purpose (no Canvas).
+/// Player economy. Holds credits and a single cargo type. Buys cargo at the
+/// docked station's live SellPrice and sells at its live BuyPrice (the station's
+/// buy/sell spread means a same-station round trip loses money, so profit needs
+/// travel). Draws a placeholder OnGUI readout plus, when docked, a trade panel
+/// showing the market trend and both prices. Lives on the Ship GameObject
+/// alongside DockingController. Placeholder UI on purpose (no Canvas).
 /// </summary>
 [RequireComponent(typeof(DockingController))]
 public class TradeController : MonoBehaviour
@@ -25,20 +27,20 @@ public class TradeController : MonoBehaviour
         docking = GetComponent<DockingController>();
     }
 
-    bool CanBuy(Station s) => s != null && credits >= s.unitPrice && cargoUnits < cargoCapacity;
+    bool CanBuy(Station s) => s != null && credits >= s.SellPrice && cargoUnits < cargoCapacity;
     bool CanSell(Station s) => s != null && cargoUnits > 0;
 
     void Buy(Station s)
     {
         if (!CanBuy(s)) return;
-        credits -= s.unitPrice;
+        credits -= s.SellPrice;
         cargoUnits += 1;
     }
 
     void Sell(Station s)
     {
         if (!CanSell(s)) return;
-        credits += s.unitPrice;
+        credits += s.BuyPrice;
         cargoUnits -= 1;
     }
 
@@ -63,13 +65,23 @@ public class TradeController : MonoBehaviour
         float rowH = 38f * scale;
         float pad = 4f * scale;
         var pstyle = new GUIStyle(GUI.skin.box) { fontSize = Mathf.RoundToInt(15f * scale) };
-        GUI.Box(new Rect(x, y, w, rowH), "Cargo price: " + s.unitPrice + " cr/unit", pstyle);
+
+        // Trend cue (ASCII so it renders in the default IMGUI font).
+        string trend = s.PriceTrend > 0 ? "^ rising"
+                     : s.PriceTrend < 0 ? "v falling"
+                     : "- steady";
+        GUI.Box(new Rect(x, y, w, rowH), "Market: " + trend, pstyle);
+
+        // Both live prices. "Buy" is what you pay, "Sell" is what the station pays you.
+        GUI.Box(new Rect(x, y + (rowH + pad), w, rowH),
+            "Buy @ " + s.SellPrice + "    Sell @ " + s.BuyPrice, pstyle);
 
         var bstyle = new GUIStyle(GUI.skin.button) { fontSize = Mathf.RoundToInt(15f * scale) };
+        float by = y + (rowH + pad) * 2f;
         GUI.enabled = CanBuy(s);
-        if (GUI.Button(new Rect(x, y + rowH + pad, w * 0.5f - pad, rowH), "Buy", bstyle)) Buy(s);
+        if (GUI.Button(new Rect(x, by, w * 0.5f - pad, rowH), "Buy", bstyle)) Buy(s);
         GUI.enabled = CanSell(s);
-        if (GUI.Button(new Rect(x + w * 0.5f + pad, y + rowH + pad, w * 0.5f - pad, rowH), "Sell", bstyle)) Sell(s);
+        if (GUI.Button(new Rect(x + w * 0.5f + pad, by, w * 0.5f - pad, rowH), "Sell", bstyle)) Sell(s);
         GUI.enabled = true;
     }
 }

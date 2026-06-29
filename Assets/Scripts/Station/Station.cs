@@ -15,22 +15,31 @@ public class Station : MonoBehaviour
     public string id = "STN";
     public Color tint = Color.white;
 
-    [Tooltip("Price of one cargo unit at this station, in credits. Buy and sell both use this.")]
-    public int unitPrice = 0;
+    [Tooltip("The moving market for this station. Buy and sell prices derive from it.")]
+    public PriceCurve market = new PriceCurve();
 
     [Tooltip("Where a ship docks, as an offset from the station centre.")]
     public Vector3 dockLocalOffset = new Vector3(0f, 0f, 40f);
 
-    /// <summary>World-space point a ship aims for when docking (used later).</summary>
+    /// <summary>World-space point a ship aims for when docking.</summary>
     public Vector3 DockPoint => transform.TransformPoint(dockLocalOffset);
 
+    /// <summary>Price the player pays to buy one cargo unit right now.</summary>
+    public int SellPrice => market.SellPriceToPlayer(Time.timeSinceLevelLoad);
+
+    /// <summary>Price this station pays the player per cargo unit sold right now.</summary>
+    public int BuyPrice => market.BuyPriceFromPlayer(Time.timeSinceLevelLoad);
+
+    /// <summary>Recent price direction: +1 rising, -1 falling, 0 flat.</summary>
+    public int PriceTrend => market.Trend(Time.timeSinceLevelLoad);
+
     /// <summary>Configure and build the station. Call right after AddComponent.</summary>
-    public void Initialize(string displayName, string id, Color tint, Vector3 position, int unitPrice)
+    public void Initialize(string displayName, string id, Color tint, Vector3 position, PriceCurve market)
     {
         this.displayName = displayName;
         this.id = id;
         this.tint = tint;
-        this.unitPrice = unitPrice;
+        this.market = market;
         name = displayName;
         transform.position = position;
         if (!All.Contains(this)) All.Add(this);
