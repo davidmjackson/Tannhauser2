@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -38,17 +39,23 @@ public class StationField : MonoBehaviour
     [Tooltip("Hard floor so prices never reach zero, in credits.")]
     public float priceFloor = 5f;
 
+    [Tooltip("Base price of a station's own (home) good. Low, so it is cheap to buy where produced.")]
+    public float homeBasePrice = 40f;
+
+    [Tooltip("Base price of goods not produced at a station. High, so they are dear to sell into.")]
+    public float foreignBasePrice = 90f;
+
     public Station[] Stations { get; private set; }
 
     struct Def
     {
         public string planetName, stationName, id;
         public Color tint;
-        public int basePrice;
-        public Def(string planetName, string stationName, string id, Color tint, int basePrice)
+        public Commodity home;
+        public Def(string planetName, string stationName, string id, Color tint, Commodity home)
         {
             this.planetName = planetName; this.stationName = stationName;
-            this.id = id; this.tint = tint; this.basePrice = basePrice;
+            this.id = id; this.tint = tint; this.home = home;
         }
     }
 
@@ -56,9 +63,9 @@ public class StationField : MonoBehaviour
     {
         var defs = new[]
         {
-            new Def("Helios",  "Station Helios",  "STN-H", new Color(1f, 0.55f, 0.15f),  50),
-            new Def("Verdant", "Station Verdant", "STN-V", new Color(0.35f, 0.8f, 0.45f), 65),
-            new Def("Cobalt",  "Station Cobalt",  "STN-C", new Color(0.3f, 0.6f, 1f),     80),
+            new Def("Helios",  "Station Helios",  "STN-H", new Color(1f, 0.55f, 0.15f),  Commodity.Fuel),
+            new Def("Verdant", "Station Verdant", "STN-V", new Color(0.35f, 0.8f, 0.45f), Commodity.Grain),
+            new Def("Cobalt",  "Station Cobalt",  "STN-C", new Color(0.3f, 0.6f, 1f),     Commodity.Electronics),
         };
 
         Vector3[] planetPos = TrianglePositions(separation);
@@ -70,8 +77,8 @@ public class StationField : MonoBehaviour
             SpawnPlanet(defs[i].planetName, defs[i].tint, planetPos[i]);
 
             Vector3 spos = planetPos[i] + new Vector3(stationOffset, 0f, 0f);
-            PriceCurve market = BuildMarket(defs[i].basePrice, i, defs.Length);
-            Station s = SpawnStation(defs[i].stationName, defs[i].id, defs[i].tint, spos, market);
+            var markets = BuildMarkets(defs[i].home, i, defs.Length);
+            Station s = SpawnStation(defs[i].stationName, defs[i].id, defs[i].tint, spos, defs[i].home, markets);
             Stations[i] = s;
 
             var marker = gameObject.AddComponent<TargetMarker>();
@@ -105,30 +112,43 @@ public class StationField : MonoBehaviour
         planet.Initialize(displayName, tint, position, planetRadius);
     }
 
-    Station SpawnStation(string displayName, string id, Color tint, Vector3 position, PriceCurve market)
+    Station SpawnStation(string displayName, string id, Color tint, Vector3 position,
+                         Commodity home, Dictionary<Commodity, PriceCurve> markets)
     {
         GameObject go = new GameObject(displayName);
         Station station = go.AddComponent<Station>();
-        station.Initialize(displayName, id, tint, position, market);
+        station.Initialize(displayName, id, tint, position, home, markets);
         return station;
     }
 
-    // Build a moving market for one station. Period and phase are spread across
-    // the stations (by index) so the three markets do not move in lockstep.
-    PriceCurve BuildMarket(int basePrice, int index, int count)
+    // Build a moving market for each good at one station. The home good gets the
+    // low base price (cheap to buy here); the others get the high base price (dear
+    // to sell into). Each (station, good) gets a distinct phase/period/seed from a
+    // lane index (0..stationCount*goodCount-1) so all the markets drift out of step.
+    Dictionary<Commodity, PriceCurve> BuildMarkets(Commodity home, int stationIndex, int stationCount)
     {
-        float frac = count > 1 ? (float)index / count : 0f;
-        return new PriceCurve
+        var goods = Commodities.All;
+        int laneCount = stationCount * goods.Length;
+        var dict = new Dictionary<Commodity, PriceCurve>();
+        for (int g = 0; g < goods.Length; g++)
         {
-            basePrice = basePrice,
-            amplitude = basePrice * amplitudeFraction,
-            period = Mathf.Lerp(periodMin, periodMax, frac),
-            phase = frac,
-            noiseAmplitude = basePrice * noiseFraction,
-            noiseScale = noiseScale,
-            seed = index * 13.7f + 1f,
-            spread = basePrice * spreadFraction,
-            priceFloor = priceFloor,
-        };
+            Commodity c = goods[g];
+            float basePrice = (c == home) ? homeBasePrice : foreignBasePrice;
+            int lane = stationIndex * goods.Length + g;
+            float frac = laneCount > 1 ? (float)lane / laneCount : 0f;
+            dict[c] = new PriceCurve
+            {
+                basePrice = basePrice,
+                amplitude = basePrice * amplitudeFraction,
+                period = Mathf.Lerp(periodMin, periodMax, frac),
+                phase = frac,
+                noiseAmplitude = basePrice * noiseFraction,
+                noiseScale = noiseScale,
+                seed = lane * 13.7f + 1f,
+                spread = basePrice * spreadFraction,
+                priceFloor = priceFloor,
+            };
+        }
+        return dict;
     }
 }
