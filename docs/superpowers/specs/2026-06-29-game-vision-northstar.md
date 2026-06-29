@@ -48,6 +48,12 @@ Arriving is a **skill moment that varies by location**, not a menu:
 Each location is its own small piloting challenge with its own procedure. Arrival
 is part of the fun.
 
+The **ship handles differently depending on mode**: normal flight is responsive
+and fast; an approach/docking mode is slower and more precise for threading rings
+and setting down on pads. Switching between flight and docking behaviour is part
+of the skill-based docking feature (designed when that feature is built, light in
+Rung 2, full in Rung 3).
+
 ## 4. Activities — a balanced sandbox
 
 Trade, missions, and combat are **all first-class**. The player chooses their

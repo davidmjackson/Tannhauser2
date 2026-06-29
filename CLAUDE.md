@@ -82,7 +82,7 @@ Stop after each step for my confirmation.
 
 ## 5. The build ladder (scope sequencing)
 
-Build in this order. Do not start a rung until the one below feels good. This is the single most important discipline in the project.
+Build in this order. Do not start a rung until the one below feels good. This is the single most important discipline in the project. A live, high-level task checklist per rung (for tracking progress) lives at `docs/ROADMAP.md`.
 
 - **Rung 1 — Vertical slice:** fly between two stations, dock at each, buy cargo at one and sell at the other for profit. Nothing else. (Full spec in section 6.)
 - **Rung 2 — POC:** add 3 planets as backdrops with orbital stations, market price trends (numbers moving), and one cargo mission type.
