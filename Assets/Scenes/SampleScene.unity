@@ -685,6 +685,7 @@ GameObject:
   - component: {fileID: 1828340514}
   - component: {fileID: 1828340516}
   - component: {fileID: 1828340517}
+  - component: {fileID: 1828340518}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -768,6 +769,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DockingController
   dockRange: 80
+  toggleCooldown: 0.5
+--- !u!114 &1828340518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828340513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa64f15aa48ed5d439f3b5900fbe17d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TradeController
+  credits: 1000
+  cargoUnits: 0
+  cargoCapacity: 10
 --- !u!1 &1856082247
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,6 +817,8 @@ MonoBehaviour:
   separation: 1500
   colorA: {r: 0.3, g: 0.6, b: 1, a: 1}
   colorB: {r: 1, g: 0.55, b: 0.15, a: 1}
+  priceA: 50
+  priceB: 80
 --- !u!4 &1856082249
 Transform:
   m_ObjectHideFlags: 0
