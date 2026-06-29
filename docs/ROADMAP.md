@@ -37,10 +37,12 @@ A small three-planet system with fast travel, a moving market, and a first job.
 - [ ] Light-speed visual effect during jump (stretched starlight) — art, later
 - [ ] Stop the jump passing straight through a planet when a station sits behind one (behavior fix)
 
-**Step 2 — Market price trends**  [~]
-- [ ] Prices drift up and down over time (a market that moves): per-station wave
+**Step 2 — Market price trends**  [x]
+- [x] Prices drift up and down over time (a market that moves): per-station wave
       + light noise, a buy/sell spread to force travel, docked-only trend UI.
-      Single commodity. (Spec: `docs/superpowers/specs/2026-06-29-rung2-step2-market-price-trends-design.md`)
+      Single commodity. Acceptance passed (prices move, trend matches, spread
+      visible, profitable loop works, timing pays, no errors). (Spec:
+      `docs/superpowers/specs/2026-06-29-rung2-step2-market-price-trends-design.md`)
 
 **Step 2b — Multiple commodities**  [ ]
 - [ ] Several goods (ore, medicine, etc.) with a multi-good cargo hold and trade
@@ -93,8 +95,9 @@ any time, cheaply, if a less-boxy look is wanted sooner.
 ## Where we are right now
 
 Rung 2, Step 1 is complete (all four tasks done, acceptance passed) and merged.
-Rung 2, Step 2 (market price trends) is in progress: design approved, spec
-written, implementation plan next. During its brainstorming the news idea was
-captured and re-sequenced as Steps 2b (multiple commodities) and 2c (financial
-news + event shocks). A few jump-drive polish items remain parked (see the step-1
-polish list).
+Rung 2, Step 2 (market price trends) is complete: per-station wave + noise
+market with a buy/sell spread and a docked trend UI, acceptance passed (pending
+merge). During its brainstorming the news idea was captured and re-sequenced as
+Steps 2b (multiple commodities) and 2c (financial news + event shocks). Next up
+is Step 2b. A few jump-drive polish items remain parked (see the step-1 polish
+list).
