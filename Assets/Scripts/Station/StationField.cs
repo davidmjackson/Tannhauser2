@@ -18,17 +18,37 @@ public class StationField : MonoBehaviour
     [Tooltip("Station distance from its planet centre, in world units.")]
     public float stationOffset = 600f;
 
+    [Header("Market (price trends)")]
+    [Tooltip("Wave swing as a fraction of base price.")]
+    public float amplitudeFraction = 0.20f;
+
+    [Tooltip("Light noise swing as a fraction of base price.")]
+    public float noiseFraction = 0.05f;
+
+    [Tooltip("Buy/sell spread as a fraction of base price. Kept below the gap between station base prices so travel still pays.")]
+    public float spreadFraction = 0.18f;
+
+    [Tooltip("Shortest and longest wave period (seconds). Each station gets a value spread across this range.")]
+    public float periodMin = 22f;
+    public float periodMax = 38f;
+
+    [Tooltip("How fast the noise drifts.")]
+    public float noiseScale = 0.04f;
+
+    [Tooltip("Hard floor so prices never reach zero, in credits.")]
+    public float priceFloor = 5f;
+
     public Station[] Stations { get; private set; }
 
     struct Def
     {
         public string planetName, stationName, id;
         public Color tint;
-        public int price;
-        public Def(string planetName, string stationName, string id, Color tint, int price)
+        public int basePrice;
+        public Def(string planetName, string stationName, string id, Color tint, int basePrice)
         {
             this.planetName = planetName; this.stationName = stationName;
-            this.id = id; this.tint = tint; this.price = price;
+            this.id = id; this.tint = tint; this.basePrice = basePrice;
         }
     }
 
@@ -50,7 +70,8 @@ public class StationField : MonoBehaviour
             SpawnPlanet(defs[i].planetName, defs[i].tint, planetPos[i]);
 
             Vector3 spos = planetPos[i] + new Vector3(stationOffset, 0f, 0f);
-            Station s = SpawnStation(defs[i].stationName, defs[i].id, defs[i].tint, spos, defs[i].price);
+            PriceCurve market = BuildMarket(defs[i].basePrice, i, defs.Length);
+            Station s = SpawnStation(defs[i].stationName, defs[i].id, defs[i].tint, spos, market);
             Stations[i] = s;
 
             var marker = gameObject.AddComponent<TargetMarker>();
@@ -84,11 +105,30 @@ public class StationField : MonoBehaviour
         planet.Initialize(displayName, tint, position, planetRadius);
     }
 
-    Station SpawnStation(string displayName, string id, Color tint, Vector3 position, int unitPrice)
+    Station SpawnStation(string displayName, string id, Color tint, Vector3 position, PriceCurve market)
     {
         GameObject go = new GameObject(displayName);
         Station station = go.AddComponent<Station>();
-        station.Initialize(displayName, id, tint, position, unitPrice);
+        station.Initialize(displayName, id, tint, position, market);
         return station;
+    }
+
+    // Build a moving market for one station. Period and phase are spread across
+    // the stations (by index) so the three markets do not move in lockstep.
+    PriceCurve BuildMarket(int basePrice, int index, int count)
+    {
+        float frac = count > 1 ? (float)index / count : 0f;
+        return new PriceCurve
+        {
+            basePrice = basePrice,
+            amplitude = basePrice * amplitudeFraction,
+            period = Mathf.Lerp(periodMin, periodMax, frac),
+            phase = frac,
+            noiseAmplitude = basePrice * noiseFraction,
+            noiseScale = noiseScale,
+            seed = index * 13.7f + 1f,
+            spread = basePrice * spreadFraction,
+            priceFloor = priceFloor,
+        };
     }
 }
