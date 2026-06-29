@@ -28,8 +28,8 @@ A small three-planet system with fast travel, a moving market, and a first job.
 
 **Step 1 — Planets, orbital stations, in-system jump**  [~]
 - [x] Three-planet layout (3 planets, one station each, a marker on each)
-- [ ] Aim-to-focus markers (marker highlights the station you point at)
-- [ ] In-system cruise/jump drive (aim, jump, auto-cutout or disengage)
+- [x] Aim-to-focus markers (marker highlights the station you point at)
+- [~] In-system cruise/jump drive (aim, jump, auto-cutout or disengage)
 - [ ] Acceptance play-test + distance/jump feel tuning
 
 **Step 2 — Market price trends**  [ ]
@@ -77,5 +77,6 @@ any time, cheaply, if a less-boxy look is wanted sooner.
 
 ## Where we are right now
 
-Rung 2, Step 1, on branch `rung2-planets-stations`. Task 1 (three-planet layout)
-is committed; next up is Task 2 (aim-to-focus markers).
+Rung 2, Step 1, on branch `rung2-planets-stations`. Tasks 1 (three-planet layout)
+and 2 (aim-to-focus markers) are committed; in progress is Task 3 (in-system
+cruise/jump drive).
