@@ -21,6 +21,8 @@ A 3D space trading game, built in Unity, directed by a non-coder using Claude Co
 - Different stations use different docking procedures.
 - End goal: buy a hyperdrive, jump to a new system, earn from exploration data.
 
+The full, expanded version of this vision (10x-Sol system scale, ring-system and surface bases, three travel tiers, balanced trade/combat/missions sandbox, open-galaxy endgame) is captured as the north-star doc: `docs/superpowers/specs/2026-06-29-game-vision-northstar.md`. It steers the rungs; it is not built from directly.
+
 **Explicitly out of MVP:** no third-person, get-out-and-walk-around feature.
 
 This is a learning project. The driver is learning game development with Claude and shipping a first playable game. Success is "finished something playable and learned a lot," not market size. Take the time it takes.
