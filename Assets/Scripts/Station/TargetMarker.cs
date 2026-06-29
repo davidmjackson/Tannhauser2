@@ -11,6 +11,9 @@ public class TargetMarker : MonoBehaviour
     public Station target;
     public Camera cam;
 
+    /// <summary>Set by NavTargeting when the ship is aiming at this marker's station.</summary>
+    public bool Focused = false;
+
     [Tooltip("Padding from the screen edge for the off-screen marker, in pixels.")]
     public float edgePadding = 40f;
 
@@ -56,6 +59,11 @@ public class TargetMarker : MonoBehaviour
     void DrawLabel(Vector2 guiPos, string text)
     {
         var style = new GUIStyle(GUI.skin.box) { fontSize = 16 };
+        if (Focused)
+        {
+            style.fontStyle = FontStyle.Bold;
+            style.normal.textColor = new Color(1f, 0.85f, 0.2f); // amber when focused
+        }
         Vector2 size = style.CalcSize(new GUIContent(text));
         var rect = new Rect(guiPos.x - size.x * 0.5f, guiPos.y - size.y * 0.5f, size.x, size.y);
         GUI.Box(rect, text, style);

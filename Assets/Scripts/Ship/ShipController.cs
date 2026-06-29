@@ -29,6 +29,10 @@ public class ShipController : MonoBehaviour
     [Tooltip("Speed/thrust multiplier while Left Shift is held.")]
     public float boostMultiplier = 2f;
 
+    [Header("Control")]
+    [Tooltip("When true, player steering and thrust are suspended (e.g. during a jump). The Rigidbody is driven elsewhere.")]
+    public bool controlsSuspended = false;
+
     private Rigidbody rb;
     private float throttle;
     private float roll;
@@ -46,6 +50,8 @@ public class ShipController : MonoBehaviour
 
     void Update()
     {
+        if (controlsSuspended) { look = Vector2.zero; return; }
+
         var kb = Keyboard.current;
         var mouse = Mouse.current;
         if (kb == null || mouse == null) return;
@@ -59,6 +65,8 @@ public class ShipController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (controlsSuspended) return;
+
         var kb = Keyboard.current;
         bool boosting = kb != null && kb.leftShiftKey.isPressed;
         bool braking = kb != null && kb.leftCtrlKey.isPressed;
