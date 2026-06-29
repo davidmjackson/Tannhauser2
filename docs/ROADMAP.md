@@ -44,9 +44,12 @@ A small three-planet system with fast travel, a moving market, and a first job.
       visible, profitable loop works, timing pays, no errors). (Spec:
       `docs/superpowers/specs/2026-06-29-rung2-step2-market-price-trends-design.md`)
 
-**Step 2b — Multiple commodities**  [ ]
-- [ ] Several goods (ore, medicine, etc.) with a multi-good cargo hold and trade
-      UI, per-commodity prices. Lands before news so news can name specific goods.
+**Step 2b — Multiple commodities**  [~]
+- [ ] Three goods (Fuel/Grain/Electronics), one produced per station
+      (specialization: home good cheap, imports dear), a shared 10-unit hold, and
+      per-(station,good) moving prices + trade UI. Lands before news so news can
+      name specific goods. (Spec:
+      `docs/superpowers/specs/2026-06-29-rung2-step2b-multiple-commodities-design.md`)
 
 **Step 2c — Financial news + event shocks**  [ ]
 - [ ] A periodic news feed whose articles hint at coming price peaks/troughs,
