@@ -25,11 +25,51 @@ public class TradeController : MonoBehaviour
         docking = GetComponent<DockingController>();
     }
 
+    bool CanBuy(Station s) => s != null && credits >= s.unitPrice && cargoUnits < cargoCapacity;
+    bool CanSell(Station s) => s != null && cargoUnits > 0;
+
+    void Buy(Station s)
+    {
+        if (!CanBuy(s)) return;
+        credits -= s.unitPrice;
+        cargoUnits += 1;
+    }
+
+    void Sell(Station s)
+    {
+        if (!CanSell(s)) return;
+        credits += s.unitPrice;
+        cargoUnits -= 1;
+    }
+
     void OnGUI()
     {
+        // OnGUI uses fixed pixel sizes, so scale everything up on high-res displays
+        // (reference height 1080). Keeps the placeholder UI readable at any resolution.
+        float scale = Mathf.Max(1f, Screen.height / 1080f) * 1.3f;
+
         // Always-on corner readout.
         string readout = "Credits: " + credits + "\nCargo: " + cargoUnits + "/" + cargoCapacity;
-        var style = new GUIStyle(GUI.skin.box) { fontSize = 16, alignment = TextAnchor.UpperLeft };
-        GUI.Box(new Rect(10f, 10f, 170f, 52f), readout, style);
+        var style = new GUIStyle(GUI.skin.box) { fontSize = Mathf.RoundToInt(16f * scale), alignment = TextAnchor.UpperLeft };
+        GUI.Box(new Rect(10f * scale, 10f * scale, 200f * scale, 60f * scale), readout, style);
+
+        // Docked trade panel.
+        Station s = docking != null ? docking.DockedStation : null;
+        if (s == null) return;
+
+        float w = 260f * scale;
+        float x = Screen.width * 0.5f - w * 0.5f;
+        float y = 80f * scale;
+        float rowH = 38f * scale;
+        float pad = 4f * scale;
+        var pstyle = new GUIStyle(GUI.skin.box) { fontSize = Mathf.RoundToInt(15f * scale) };
+        GUI.Box(new Rect(x, y, w, rowH), "Cargo price: " + s.unitPrice + " cr/unit", pstyle);
+
+        var bstyle = new GUIStyle(GUI.skin.button) { fontSize = Mathf.RoundToInt(15f * scale) };
+        GUI.enabled = CanBuy(s);
+        if (GUI.Button(new Rect(x, y + rowH + pad, w * 0.5f - pad, rowH), "Buy", bstyle)) Buy(s);
+        GUI.enabled = CanSell(s);
+        if (GUI.Button(new Rect(x + w * 0.5f + pad, y + rowH + pad, w * 0.5f - pad, rowH), "Sell", bstyle)) Sell(s);
+        GUI.enabled = true;
     }
 }

@@ -57,6 +57,10 @@ public class DockingController : MonoBehaviour
         dockedAt = s;
         rb.isKinematic = true;        // freeze: kills all linear and angular motion
         if (ship != null) ship.enabled = false;
+        // Free the mouse so the player can click the trade panel. Flight locks it
+        // to aim the nose; docked, we need a normal pointer.
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         cooldown = toggleCooldown;
     }
 
@@ -66,6 +70,9 @@ public class DockingController : MonoBehaviour
         dockedAt = null;
         rb.isKinematic = false;
         if (ship != null) ship.enabled = true;
+        // Re-lock the mouse for flight aiming.
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         cooldown = toggleCooldown;
     }
 
@@ -89,18 +96,20 @@ public class DockingController : MonoBehaviour
 
     void OnGUI()
     {
+        float scale = Mathf.Max(1f, Screen.height / 1080f) * 1.3f;
         if (docked && dockedAt != null)
         {
-            DrawCenter(30f, "DOCKED - " + dockedAt.displayName + "   (F to undock)");
+            DrawCenter(30f * scale, "DOCKED - " + dockedAt.displayName + "   (F to undock)");
             return;
         }
         if (nearby != null)
-            DrawCenter(Screen.height - 80f, "Press F to dock");
+            DrawCenter(Screen.height - 80f * scale, "Press F to dock");
     }
 
     void DrawCenter(float y, string text)
     {
-        var style = new GUIStyle(GUI.skin.box) { fontSize = 18 };
+        float scale = Mathf.Max(1f, Screen.height / 1080f) * 1.3f;
+        var style = new GUIStyle(GUI.skin.box) { fontSize = Mathf.RoundToInt(18f * scale) };
         Vector2 size = style.CalcSize(new GUIContent(text));
         var rect = new Rect(Screen.width * 0.5f - size.x * 0.5f, y, size.x, size.y);
         GUI.Box(rect, text, style);
