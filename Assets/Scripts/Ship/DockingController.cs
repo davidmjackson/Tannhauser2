@@ -24,6 +24,9 @@ public class DockingController : MonoBehaviour
     private Station dockedAt;
     private float cooldown;
 
+    /// <summary>The station the ship is docked at, or null when flying. Read by TradeController.</summary>
+    public Station DockedStation => docked ? dockedAt : null;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
