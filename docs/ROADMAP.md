@@ -30,7 +30,12 @@ A small three-planet system with fast travel, a moving market, and a first job.
 - [x] Three-planet layout (3 planets, one station each, a marker on each)
 - [x] Aim-to-focus markers (marker highlights the station you point at)
 - [x] In-system cruise/jump drive (aim, jump, auto-cutout or disengage)
-- [~] Acceptance play-test + distance/jump feel tuning
+- [x] Acceptance play-test + distance/jump feel tuning (all tests pass; distances and jump feel approved)
+
+**Jump-drive polish (deferred refinements from the step-1 play-test):**
+- [ ] Jump engine charge-up: a couple-second wind-up before the jump engages (functional timing now-able; the power-cell charging animation is art, later)
+- [ ] Light-speed visual effect during jump (stretched starlight) — art, later
+- [ ] Stop the jump passing straight through a planet when a station sits behind one (behavior fix)
 
 **Step 2 — Market price trends**  [ ]
 - [ ] Prices drift up and down over time (a market that moves)
@@ -77,6 +82,6 @@ any time, cheaply, if a less-boxy look is wanted sooner.
 
 ## Where we are right now
 
-Rung 2, Step 1, on branch `rung2-planets-stations`. Tasks 1-3 (three-planet
-layout, aim-to-focus markers, in-system jump drive) are committed; in progress is
-Task 4 (acceptance play-test + distance/jump feel tuning).
+Rung 2, Step 1 is complete (all four tasks done, acceptance passed) on branch
+`rung2-planets-stations`, ready to merge. Next up is Rung 2, Step 2 (market price
+trends). A few jump-drive polish items are parked (see the step-1 polish list).
