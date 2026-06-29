@@ -15,8 +15,11 @@ public class Station : MonoBehaviour
     public string id = "STN";
     public Color tint = Color.white;
 
-    [Tooltip("The moving market for this station. Buy and sell prices derive from it.")]
-    public PriceCurve market = new PriceCurve();
+    [Tooltip("The good this station produces. It is cheap here; the other goods are dear.")]
+    public Commodity homeCommodity = Commodity.Fuel;
+
+    // One moving market per good. Set in Initialize.
+    Dictionary<Commodity, PriceCurve> markets = new Dictionary<Commodity, PriceCurve>();
 
     [Tooltip("Where a ship docks, as an offset from the station centre.")]
     public Vector3 dockLocalOffset = new Vector3(0f, 0f, 40f);
@@ -24,22 +27,27 @@ public class Station : MonoBehaviour
     /// <summary>World-space point a ship aims for when docking.</summary>
     public Vector3 DockPoint => transform.TransformPoint(dockLocalOffset);
 
-    /// <summary>Price the player pays to buy one cargo unit right now.</summary>
-    public int SellPrice => market.SellPriceToPlayer(Time.timeSinceLevelLoad);
+    /// <summary>Price the player pays to buy one unit of good c right now.</summary>
+    public int SellPrice(Commodity c) => markets[c].SellPriceToPlayer(Time.timeSinceLevelLoad);
 
-    /// <summary>Price this station pays the player per cargo unit sold right now.</summary>
-    public int BuyPrice => market.BuyPriceFromPlayer(Time.timeSinceLevelLoad);
+    /// <summary>Price this station pays the player per unit of good c sold right now.</summary>
+    public int BuyPrice(Commodity c) => markets[c].BuyPriceFromPlayer(Time.timeSinceLevelLoad);
 
-    /// <summary>Recent price direction: +1 rising, -1 falling, 0 flat.</summary>
-    public int PriceTrend => market.Trend(Time.timeSinceLevelLoad);
+    /// <summary>Recent price direction for good c: +1 rising, -1 falling, 0 flat.</summary>
+    public int PriceTrend(Commodity c) => markets[c].Trend(Time.timeSinceLevelLoad);
+
+    /// <summary>True if this station produces good c (it is cheap here).</summary>
+    public bool Produces(Commodity c) => c == homeCommodity;
 
     /// <summary>Configure and build the station. Call right after AddComponent.</summary>
-    public void Initialize(string displayName, string id, Color tint, Vector3 position, PriceCurve market)
+    public void Initialize(string displayName, string id, Color tint, Vector3 position,
+                           Commodity homeCommodity, Dictionary<Commodity, PriceCurve> markets)
     {
         this.displayName = displayName;
         this.id = id;
         this.tint = tint;
-        this.market = market;
+        this.homeCommodity = homeCommodity;
+        this.markets = markets;
         name = displayName;
         transform.position = position;
         if (!All.Contains(this)) All.Add(this);
