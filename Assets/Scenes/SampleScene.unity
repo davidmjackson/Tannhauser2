@@ -814,11 +814,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca7dd782445528b47a85497fbd1312c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StationField
-  separation: 1500
-  colorA: {r: 0.3, g: 0.6, b: 1, a: 1}
-  colorB: {r: 1, g: 0.55, b: 0.15, a: 1}
-  priceA: 50
-  priceB: 80
+  separation: 3500
+  planetRadius: 300
+  stationOffset: 600
 --- !u!4 &1856082249
 Transform:
   m_ObjectHideFlags: 0
