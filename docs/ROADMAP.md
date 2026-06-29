@@ -44,11 +44,12 @@ A small three-planet system with fast travel, a moving market, and a first job.
       visible, profitable loop works, timing pays, no errors). (Spec:
       `docs/superpowers/specs/2026-06-29-rung2-step2-market-price-trends-design.md`)
 
-**Step 2b — Multiple commodities**  [~]
-- [ ] Three goods (Fuel/Grain/Electronics), one produced per station
+**Step 2b — Multiple commodities**  [x]
+- [x] Three goods (Fuel/Grain/Electronics), one produced per station
       (specialization: home good cheap, imports dear), a shared 10-unit hold, and
-      per-(station,good) moving prices + trade UI. Lands before news so news can
-      name specific goods. (Spec:
+      per-(station,good) moving prices + trade UI. Acceptance passed (home good
+      cheapest, routes profit, shared hold caps, timing pays, spread holds). Lands
+      before news so news can name specific goods. (Spec:
       `docs/superpowers/specs/2026-06-29-rung2-step2b-multiple-commodities-design.md`)
 
 **Step 2c — Financial news + event shocks**  [ ]
@@ -98,9 +99,10 @@ any time, cheaply, if a less-boxy look is wanted sooner.
 ## Where we are right now
 
 Rung 2, Step 1 is complete (all four tasks done, acceptance passed) and merged.
-Rung 2, Step 2 (market price trends) is complete: per-station wave + noise
-market with a buy/sell spread and a docked trend UI, acceptance passed (pending
-merge). During its brainstorming the news idea was captured and re-sequenced as
-Steps 2b (multiple commodities) and 2c (financial news + event shocks). Next up
-is Step 2b. A few jump-drive polish items remain parked (see the step-1 polish
+Rung 2, Steps 2 (market price trends) and 2b (multiple commodities) are both
+complete and acceptance-passed. Step 2 added per-station moving prices with a
+buy/sell spread; Step 2b added three specialized goods (Fuel/Grain/Electronics),
+a shared hold, and per-(station,good) markets. Next up is Step 2c (financial
+news + event shocks), which can now name specific goods, then Step 3 (first cargo
+mission). A few jump-drive polish items remain parked (see the step-1 polish
 list).
