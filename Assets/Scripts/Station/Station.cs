@@ -15,6 +15,9 @@ public class Station : MonoBehaviour
     public string id = "STN";
     public Color tint = Color.white;
 
+    [Tooltip("Price of one cargo unit at this station, in credits. Buy and sell both use this.")]
+    public int unitPrice = 0;
+
     [Tooltip("Where a ship docks, as an offset from the station centre.")]
     public Vector3 dockLocalOffset = new Vector3(0f, 0f, 40f);
 
@@ -22,11 +25,12 @@ public class Station : MonoBehaviour
     public Vector3 DockPoint => transform.TransformPoint(dockLocalOffset);
 
     /// <summary>Configure and build the station. Call right after AddComponent.</summary>
-    public void Initialize(string displayName, string id, Color tint, Vector3 position)
+    public void Initialize(string displayName, string id, Color tint, Vector3 position, int unitPrice)
     {
         this.displayName = displayName;
         this.id = id;
         this.tint = tint;
+        this.unitPrice = unitPrice;
         name = displayName;
         transform.position = position;
         if (!All.Contains(this)) All.Add(this);

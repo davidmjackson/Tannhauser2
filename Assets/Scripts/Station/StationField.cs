@@ -15,24 +15,29 @@ public class StationField : MonoBehaviour
     [Tooltip("Tint for Station B.")]
     public Color colorB = new Color(1f, 0.55f, 0.15f);  // orange
 
+    [Tooltip("Cargo price at Station A (cheap, buy here).")]
+    public int priceA = 50;
+    [Tooltip("Cargo price at Station B (dear, sell here).")]
+    public int priceB = 80;
+
     public Station StationA { get; private set; }
     public Station StationB { get; private set; }
 
     void Start()
     {
-        StationA = Spawn("Station A", "STN-A", colorA, Vector3.zero);
-        StationB = Spawn("Station B", "STN-B", colorB, new Vector3(0f, 0f, separation));
+        StationA = Spawn("Station A", "STN-A", colorA, Vector3.zero, priceA);
+        StationB = Spawn("Station B", "STN-B", colorB, new Vector3(0f, 0f, separation), priceB);
 
         var marker = gameObject.AddComponent<TargetMarker>();
         marker.target = StationB;
         marker.cam = Camera.main;
     }
 
-    Station Spawn(string displayName, string id, Color tint, Vector3 position)
+    Station Spawn(string displayName, string id, Color tint, Vector3 position, int unitPrice)
     {
         GameObject go = new GameObject(displayName);
         Station station = go.AddComponent<Station>();
-        station.Initialize(displayName, id, tint, position);
+        station.Initialize(displayName, id, tint, position, unitPrice);
         return station;
     }
 }
