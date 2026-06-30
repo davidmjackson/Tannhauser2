@@ -45,6 +45,14 @@ public class StationField : MonoBehaviour
     [Tooltip("Base price of goods not produced at a station. High, so they are dear to sell into.")]
     public float foreignBasePrice = 90f;
 
+    [Header("Market (event shocks)")]
+    [Tooltip("Shortest and longest gap between news-driven price shocks, in seconds.")]
+    public float shockIntervalMin = 30f;
+    public float shockIntervalMax = 60f;
+
+    [Tooltip("Most shocks active across the system at once.")]
+    public int maxActiveShocks = 2;
+
     public Station[] Stations { get; private set; }
 
     struct Def
@@ -85,6 +93,13 @@ public class StationField : MonoBehaviour
             marker.target = s;
             marker.cam = cam;
         }
+
+        // Stations exist now, so start the news/shock director. It reads the
+        // self-healing Station.All registry, so it needs no station list passed in.
+        var director = gameObject.AddComponent<MarketDirector>();
+        director.spawnIntervalMin = shockIntervalMin;
+        director.spawnIntervalMax = shockIntervalMax;
+        director.maxActiveShocks = maxActiveShocks;
     }
 
     // Equilateral triangle in the XZ plane, centred on the origin.
