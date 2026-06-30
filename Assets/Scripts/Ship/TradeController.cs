@@ -112,7 +112,8 @@ public class TradeController : MonoBehaviour
             int tr = s.PriceTrend(c);
             string trend = tr > 0 ? "^" : tr < 0 ? "v" : "-";
             string tag = s.Produces(c) ? " (produced here)" : "";
-            string info = " " + Commodities.DisplayName(c) + tag
+            string cue = s.HasShock(c) ? "  !" : "";
+            string info = " " + Commodities.DisplayName(c) + tag + cue
                         + "    Buy " + s.SellPrice(c)
                         + "    Sell " + s.BuyPrice(c)
                         + "    " + trend
@@ -124,6 +125,39 @@ public class TradeController : MonoBehaviour
             GUI.enabled = CanSell(s, c);
             if (GUI.Button(new Rect(x + infoW + pad * 2f + btnW, ry, btnW, rowH), "Sell", bstyle)) Sell(s, c);
             GUI.enabled = true;
+        }
+
+        // News section: system-wide active headlines, below the market rows.
+        float newsY = y + (rowH + pad) * (Commodities.All.Length + 1) + pad * 2f;
+
+        var newsHeaderStyle = new GUIStyle(GUI.skin.box)
+        {
+            fontSize = Mathf.RoundToInt(15f * scale),
+            alignment = TextAnchor.MiddleCenter
+        };
+        GUI.Box(new Rect(x, newsY, w, rowH), "Market News", newsHeaderStyle);
+
+        var newsStyle = new GUIStyle(GUI.skin.box)
+        {
+            fontSize = Mathf.RoundToInt(13f * scale),
+            alignment = TextAnchor.MiddleLeft
+        };
+
+        MarketDirector director = MarketDirector.Get();
+        var headlines = director != null ? director.ActiveHeadlines() : null;
+
+        if (headlines == null || headlines.Count == 0)
+        {
+            float ny = newsY + (rowH + pad);
+            GUI.Box(new Rect(x, ny, w, rowH), " No market news.", newsStyle);
+        }
+        else
+        {
+            for (int i = 0; i < headlines.Count; i++)
+            {
+                float ny = newsY + (rowH + pad) * (i + 1);
+                GUI.Box(new Rect(x, ny, w, rowH), " " + headlines[i], newsStyle);
+            }
         }
     }
 }

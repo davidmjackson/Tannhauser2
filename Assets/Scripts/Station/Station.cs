@@ -21,20 +21,75 @@ public class Station : MonoBehaviour
     // One moving market per good. Set in Initialize.
     Dictionary<Commodity, PriceCurve> markets = new Dictionary<Commodity, PriceCurve>();
 
+    // Event shocks currently targeting this station (each carries its commodity).
+    // The MarketDirector adds shocks here and prunes expired ones.
+    readonly List<MarketShock> activeShocks = new List<MarketShock>();
+
+    /// <summary>Read-only view of this station's active shocks (for the news feed).</summary>
+    public IReadOnlyList<MarketShock> ActiveShocks => activeShocks;
+
     [Tooltip("Where a ship docks, as an offset from the station centre.")]
     public Vector3 dockLocalOffset = new Vector3(0f, 0f, 40f);
 
     /// <summary>World-space point a ship aims for when docking.</summary>
     public Vector3 DockPoint => transform.TransformPoint(dockLocalOffset);
 
+    float Now => Time.timeSinceLevelLoad;
+
+    /// <summary>
+    /// Mid-price for good c at time t, with any active event shocks for that good
+    /// folded in (summed) before the spread is applied.
+    /// </summary>
+    float EffectiveMid(Commodity c, float t)
+    {
+        float mid = markets[c].Mid(t);
+        for (int i = 0; i < activeShocks.Count; i++)
+            if (activeShocks[i].commodity == c)
+                mid += activeShocks[i].Contribution(t);
+        return mid;
+    }
+
     /// <summary>Price the player pays to buy one unit of good c right now.</summary>
-    public int SellPrice(Commodity c) => markets[c].SellPriceToPlayer(Time.timeSinceLevelLoad);
+    public int SellPrice(Commodity c) => markets[c].SellFromMid(EffectiveMid(c, Now));
 
     /// <summary>Price this station pays the player per unit of good c sold right now.</summary>
-    public int BuyPrice(Commodity c) => markets[c].BuyPriceFromPlayer(Time.timeSinceLevelLoad);
+    public int BuyPrice(Commodity c) => markets[c].BuyFromMid(EffectiveMid(c, Now));
 
     /// <summary>Recent price direction for good c: +1 rising, -1 falling, 0 flat.</summary>
-    public int PriceTrend(Commodity c) => markets[c].Trend(Time.timeSinceLevelLoad);
+    public int PriceTrend(Commodity c)
+    {
+        float t = Now;
+        float look = markets[c].TrendLookbackSeconds;
+        return markets[c].TrendFromMids(EffectiveMid(c, t), EffectiveMid(c, t - look));
+    }
+
+    /// <summary>Centre (base) price of good c, used to size shock magnitudes.</summary>
+    public float BasePrice(Commodity c) => markets[c].basePrice;
+
+    /// <summary>True if an event shock for good c is active right now.</summary>
+    public bool HasShock(Commodity c)
+    {
+        float t = Now;
+        for (int i = 0; i < activeShocks.Count; i++)
+            if (activeShocks[i].commodity == c && activeShocks[i].IsActive(t))
+                return true;
+        return false;
+    }
+
+    /// <summary>Add a shock targeting this station. Called by the MarketDirector.</summary>
+    public void AddShock(MarketShock shock) => activeShocks.Add(shock);
+
+    /// <summary>Drop shocks that have fully decayed. Called by the MarketDirector.</summary>
+    public void PruneExpiredShocks(float t) => activeShocks.RemoveAll(sh => t >= sh.EndTime);
+
+    /// <summary>How many shocks are active here right now (for the active-count cap).</summary>
+    public int LiveShockCount(float t)
+    {
+        int n = 0;
+        for (int i = 0; i < activeShocks.Count; i++)
+            if (activeShocks[i].IsActive(t)) n++;
+        return n;
+    }
 
     /// <summary>True if this station produces good c (it is cheap here).</summary>
     public bool Produces(Commodity c) => c == homeCommodity;
