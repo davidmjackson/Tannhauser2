@@ -56,24 +56,44 @@ public class PriceCurve
         return basePrice + wave + noiseAmplitude * n;
     }
 
-    /// <summary>Price the player pays to buy one unit (mid plus half the spread).</summary>
-    public int SellPriceToPlayer(float t)
+    // --- Mid-injection helpers ---------------------------------------------
+    // The straddle and trend take a mid VALUE rather than a time, so a caller
+    // (Station) can add an event shock's deviation to the mid before the spread
+    // is applied. The time-based methods below are thin wrappers passing the
+    // plain (unshocked) mid, so existing behaviour is unchanged.
+
+    /// <summary>Player's buy price for a given mid (mid plus half the spread).</summary>
+    public int SellFromMid(float mid)
     {
-        return Mathf.RoundToInt(Mathf.Max(priceFloor, Mid(t) + spread * 0.5f));
+        return Mathf.RoundToInt(Mathf.Max(priceFloor, mid + spread * 0.5f));
     }
 
-    /// <summary>Price the station pays the player per unit sold (mid minus half the spread).</summary>
-    public int BuyPriceFromPlayer(float t)
+    /// <summary>Station's pay-out price for a given mid (mid minus half the spread).</summary>
+    public int BuyFromMid(float mid)
     {
-        return Mathf.RoundToInt(Mathf.Max(priceFloor, Mid(t) - spread * 0.5f));
+        return Mathf.RoundToInt(Mathf.Max(priceFloor, mid - spread * 0.5f));
     }
 
-    /// <summary>Recent direction of the mid-price: +1 rising, -1 falling, 0 flat.</summary>
-    public int Trend(float t)
+    /// <summary>Trend from a now-mid and a past-mid: +1 rising, -1 falling, 0 flat.</summary>
+    public int TrendFromMids(float midNow, float midPast)
     {
-        float delta = Mid(t) - Mid(t - TrendLookback);
+        float delta = midNow - midPast;
         if (delta > TrendDeadband) return 1;
         if (delta < -TrendDeadband) return -1;
         return 0;
     }
+
+    /// <summary>Seconds a caller should look back to sample the past mid for a trend.</summary>
+    public float TrendLookbackSeconds => TrendLookback;
+
+    // --- Time-based convenience (unshocked) --------------------------------
+
+    /// <summary>Price the player pays to buy one unit (mid plus half the spread).</summary>
+    public int SellPriceToPlayer(float t) => SellFromMid(Mid(t));
+
+    /// <summary>Price the station pays the player per unit sold (mid minus half the spread).</summary>
+    public int BuyPriceFromPlayer(float t) => BuyFromMid(Mid(t));
+
+    /// <summary>Recent direction of the mid-price: +1 rising, -1 falling, 0 flat.</summary>
+    public int Trend(float t) => TrendFromMids(Mid(t), Mid(t - TrendLookback));
 }
